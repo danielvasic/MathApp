@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Text, StyleSheet, Alert } from "react-native";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, firestore } from "../firebaseConfig";
+import { AuthContext } from "../AuthContext";
+
 import LoginInput from "./ui/LoginInput";
 import LoginButton from "./ui/LoginButton";
 
-export default function LoggedInView({ onLogout }) {
+export default function LoggedInView() {
+  const { logout } = useContext(AuthContext);
   const [profile, setProfile] = useState({
     name: '',
     age: '',
@@ -59,7 +62,7 @@ export default function LoggedInView({ onLogout }) {
     <View style={styles.container}>
       <Text style={styles.text}>Dobrodošli na sustav</Text>
 
-      <LoginButton title="Odjavi se" onPress={onLogout} />
+      <LoginButton title="Odjavi se" onPress={logout} />
 
       <LoginInput 
         placeholder="Unesite svoje ime"

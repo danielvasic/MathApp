@@ -1,10 +1,26 @@
-import React from "react";
+import React, {useState, useContext} from "react";
 import { View, StyleSheet } from "react-native";
 import LoginInput from "./ui/LoginInput";
 import LoginButton from "./ui/LoginButton";
 import ErrorMessage from "./ui/ErrorMessage";
+import { AuthContext } from "../AuthContext";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebaseConfig";
 
-export default function LoggedOutView({ email, passw, setEmail, setPassw, errorMsg, handleLogin }) {
+export default function LoggedOutView() {
+  const {login} = useContext(AuthContext);
+  const [email, setEmail] = useState("");
+  const [passw, setPassw] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleLogin = () => {
+    signInWithEmailAndPassword(auth, email, passw)
+      .then(() => {
+        login();
+      })
+      .catch((error) => setErrorMsg(error.message));
+  };
+
   return (
     <View style={styles.container}>
       <LoginInput
@@ -22,7 +38,6 @@ export default function LoggedOutView({ email, passw, setEmail, setPassw, errorM
       />
 
       <ErrorMessage error={errorMsg} />
-
       <LoginButton title="Prijava" onPress={handleLogin} />
     </View>
   );
