@@ -26,6 +26,7 @@ export default function LoggedInTabs() {
         },
         tabBarActiveTintColor: 'navy',
         tabBarInactiveTintColor: 'gray',
+        headerShown: false
       })}
     >
       <Tab.Screen name="Profil" component={LoggedInView} />
