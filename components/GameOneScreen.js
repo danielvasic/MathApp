@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { auth, firestore } from "../firebaseConfig";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
+
+
 
 const GameOneScreen = () => {
     const [numbers, setNumbers] = useState([]);
@@ -10,6 +14,27 @@ const GameOneScreen = () => {
     const [showInput, setShowInput] = useState(false);
     const [message, setMessage] = useState('');
     const [gameStarted, setGameStarted] = useState(false);
+    const [userPoints, setUserPoints] = useState(0);
+
+    useEffect(() => {
+        const fetchUserPoints = async () => {
+            try {
+                const userId = auth.currentUser.uid;
+                const userDocRef = doc(firestore, "users", userId);
+                const userDoc = await getDoc(userDocRef);
+
+                if (userDoc.exists()) {
+                    setUserPoints(userDoc.data().points || 0);
+                } else {
+                    console.error("User document does not exist");
+                }
+            } catch (error) {
+                console.error("Error fetching user points:", error);
+            }
+        };
+
+        fetchUserPoints();
+    }, []);
 
     const startGame = () => {
         setGameStarted(true);
@@ -54,13 +79,47 @@ const GameOneScreen = () => {
         const userSum = parseInt(userInput, 10);
         if (userSum === sum) {
             setMessage('Točan odgovor, bravo samo tako nastavi!');
+            updateUserPoints(5); // Add 5 points for correct answer
         } else {
             setMessage('Netočan odgovor, pokušaj ponovo!');
+            updateUserPoints(-7); // Deduct 7 points for incorrect answer
         }
     };
 
+
+    const updateUserPoints = async (pointsChange) => {
+        try {
+            const userId = auth.currentUser.uid; // Get the current user ID
+            const userDocRef = doc(firestore, "users", userId);
+            
+            // Fetch the current user document to get the existing points
+            const userDoc = await getDoc(userDocRef);
+
+            console.log("User document:", userDoc.data());
+
+            if (userDoc.exists()) {
+                const currentPoints = userDoc.data().points || 0; // Default to 0 if points don't exist
+                const newPoints = currentPoints + pointsChange;
+
+                // Update the points in Firestore
+                await updateDoc(userDocRef, { points: newPoints });
+
+                // Update the points in the local state
+                setUserPoints(newPoints);
+
+                console.log(`User points updated to: ${newPoints}`);
+            } else {
+                console.error("User document does not exist");
+            }
+        } catch (error) {
+            console.error("Error updating user points:", error);
+        }
+    };
+
+
     return (
         <View style={styles.container}>
+            <Text style={styles.pointsText}>Vaši bodovi: {userPoints}</Text>
             {!gameStarted ? (
                 <TouchableOpacity onPress={startGame} style={styles.startButton}>
                     <Text style={styles.startText}>Započni igricu</Text>
@@ -97,6 +156,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    pointsText: {
+        fontSize: 20,
+        marginBottom: 10,
+        fontWeight: 'bold',
     },
     number: {
         fontSize: 96,

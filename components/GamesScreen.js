@@ -14,7 +14,6 @@ export default function GamesScreen() {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        console.log(firestore);
         const gamesCollection = collection(firestore, "games");
         const gamesSnapshot = await getDocs(gamesCollection);
         const gamesList = gamesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
