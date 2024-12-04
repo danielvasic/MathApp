@@ -12,7 +12,8 @@ export default function LoggedInView() {
   const [profile, setProfile] = useState({
     name: '',
     age: '',
-    bio: ''
+    bio: '',
+    points: 0
   });
   const [loading, setLoading] = useState(true);
 
@@ -24,7 +25,7 @@ export default function LoggedInView() {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          setProfile(docSnap.data());
+          setProfile({ ...docSnap.data() });
         } else {
           console.log("No such document!");
         }

@@ -5,6 +5,7 @@ import { MaterialIcons } from 'react-native-vector-icons'; // Adjust icon librar
 import LoggedInView from './LoggedInView';
 import GamesScreen from './GamesScreen';
 import GameOneScreen from './GameOneScreen';
+import Leaderboard from './Leaderboard';
 
 const Tab = createBottomTabNavigator();
 
@@ -22,6 +23,8 @@ export default function LoggedInTabs() {
             iconName = 'gamepad'; // Icon name from MaterialIcons
           } else if (route.name === 'GameOne') {
             iconName = 'calculate'; // Icon name from MaterialIcons
+          } else if (route.name === 'Ljestvica') {
+            iconName = 'leaderboard'; // Icon name from MaterialIcons
           }
 
           // Return the icon component
@@ -34,6 +37,7 @@ export default function LoggedInTabs() {
       <Tab.Screen name="GameOne" component={GameOneScreen} />
       <Tab.Screen name="Profil" component={LoggedInView} />
       <Tab.Screen name="Igrice" component={GamesScreen} />
+      <Tab.Screen name="Ljestvica" component={Leaderboard} />
     </Tab.Navigator>
   );
 }
