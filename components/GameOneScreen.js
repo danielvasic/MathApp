@@ -95,17 +95,13 @@ const GameOneScreen = () => {
             // Fetch the current user document to get the existing points
             const userDoc = await getDoc(userDocRef);
 
-            console.log("User document:", userDoc.data());
-
             if (userDoc.exists()) {
                 const currentPoints = userDoc.data().points || 0; // Default to 0 if points don't exist
                 const newPoints = currentPoints + pointsChange;
-
-                // Update the points in Firestore
-                await updateDoc(userDocRef, { points: newPoints });
-
                 // Update the points in the local state
                 setUserPoints(newPoints);
+                // Update the points in Firestore
+                await updateDoc(userDocRef, { points: newPoints });
 
                 console.log(`User points updated to: ${newPoints}`);
             } else {
